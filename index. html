@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1-5th Consolidated Marks Register (2026-27)</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --bg: #f8fafc;
+      --text: #0f172a;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 10px;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    .app-header {
+      background: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      margin-bottom: 15px;
+      border-bottom: 4px solid var(--primary);
+      text-align: center;
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+    .app-header h2 {
+      margin: 5px 0 0 0;
+      font-size: 1.1rem;
+      color: #475569;
+    }
+    .editable-info {
+      background: white;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+    }
+    .info-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+    .info-field input, .info-field select {
+      padding: 5px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+    .no-print {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 5px 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 0.8rem;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .btn-submit { background-color: #2563eb; color: white; }
+    .btn-save { background-color: #0284c7; color: white; }
+    .btn-print { background-color: #059669; color: white; }
+    .btn-clear { background-color: #dc2626; color: white; }
+    #statusMsg { font-weight: bold; color: #059669; font-size: 0.85rem; }
+
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.65rem;
+    }
+    th, td {
+      border: 1px solid #475569;
+      padding: 4px 2px;
+      text-align: center;
+      word-break: break-word;
+    }
+    th { background-color: #f1f5f9; }
+    .head-subj { background-color: #e0f2fe; }
+    .head-co { background-color: #fef3c7; }
+
+    .footer-signature {
+      margin-top: 20px;
+      text-align: right;
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #1e3a8a;
+    }
+
+    @media print {
+      body { background: white; margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+      .app-header { box-shadow: none; border-bottom: 2px solid #000; }
+      .editable-info input, .editable-info select { border: none; background: transparent; appearance: none; }
+      table { width: 100%; font-size: 6pt; }
+      th, td { border: 1px solid #000; padding: 2px 1px; }
+      tr { page-break-inside: avoid; }
+      @page { size: A3 landscape; margin: 6mm; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1 id="dispSchool">GOVERNMENT LOWER/HIGHER PRIMARY SCHOOL</h1>
+    <h2>1-5TH CONSOLIDATED MARKS REGISTER</h2>
+  </div>
+
+  <!-- SCHOOL INFORMATION -->
+  <div class="editable-info">
+    <div class="info-field">
+      <label>SCHOOL NAME:</label>
+      <input type="text" id="schoolName" placeholder="Enter School Name" style="width: 250px;" oninput="updateHeader()">
+    </div>
+    <div class="info-field">
+      <label>TALUK:</label>
+      <input type="text" id="talukName" placeholder="Enter Taluk Name" style="width: 130px;">
+    </div>
+    <div class="info-field">
+      <label>DISTRICT:</label>
+      <input type="text" id="distName" placeholder="Enter District Name" style="width: 130px;">
+    </div>
+    <div class="info-field">
+      <label>CLASS:</label>
+      <select id="className" style="width: 80px;">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div class="info-field">
+      <label>ACADEMIC YEAR:</label>
+      <input type="text" id="acadYear" value="2026-27" style="width: 90px;">
+    </div>
+    <div class="info-field">
+      <label>TOTAL DAYS:</label>
+      <input type="number" id="totalDays" value="220" style="width: 60px;">
+    </div>
+  </div>
+
+  <!-- FORM SECTION -->
+  <div class="no-print">
+    <form id="marksForm">
+      <div class="form-grid">
+        <div class="form-group"><label>Sl. No.</label><input type="number" id="slNo" required></div>
+        <div class="form-group"><label>Student Name</label><input type="text" id="studentName" required></div>
+        <div class="form-group"><label>Days Present</label><input type="number" id="daysPresent" required></div>
+      </div>
+
+      <div style="font-weight: bold; margin: 10px 0 5px 0; color: var(--primary);">Semester 1 Marks (Out of 50)</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Kannada S1</label><input type="number" id="kan_s1" max="50" step="0.1" required></div>
+        <div class="form-group"><label>English S1</label><input type="number" id="eng_s1" max="50" step="0.1" required></div>
+        <div class="form-group"><label>Maths S1</label><input type="number" id="mat_s1" max="50" step="0.1" required></div>
+        <div class="form-group"><label>EVS S1</label><input type="number" id="evs_s1" max="50" step="0.1" required></div>
+      </div>
+
+      <div style="font-weight: bold; margin: 10px 0 5px 0; color: var(--primary);">Semester 2 Marks (Out of 50)</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Kannada S2</label><input type="number" id="kan_s2" max="50" step="0.1" required></div>
+        <div class="form-group"><label>English S2</label><input type="number" id="eng_s2" max="50" step="0.1" required></div>
+        <div class="form-group"><label>Maths S2</label><input type="number" id="mat_s2" max="50" step="0.1" required></div>
+        <div class="form-group"><label>EVS S2</label><input type="number" id="evs_s2" max="50" step="0.1" required></div>
+      </div>
+
+      <div style="font-weight: bold; margin: 10px 0 5px 0; color: var(--primary);">Co-Curricular Grades</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Physical Edu</label><input type="text" id="g_pe" placeholder="A+" required></div>
+        <div class="form-group"><label>Music/Dance</label><input type="text" id="g_md" placeholder="A" required></div>
+        <div class="form-group"><label>SUPW/Crafts</label><input type="text" id="g_craft" placeholder="A+" required></div>
+        <div class="form-group"><label>Health & Value</label><input type="text" id="g_hv" placeholder="A" required></div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit">➕ Add Student Row</button>
+        <button type="button" class="btn-save" onclick="saveData()">💾 Save Register</button>
+        <button type="button" class="btn-print" onclick="window.print()">🖨️ Print Register (A3)</button>
+        <button type="button" class="btn-clear" onclick="clearData()">🗑️ Clear All</button>
+        <span id="statusMsg"></span>
+      </div>
+    </form>
+  </div>
+
+  <!-- MARKS TABLE -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">SL. NO.</th>
+          <th rowspan="2">STUDENT NAME</th>
+          <th rowspan="2">ATTENDANCE</th>
+          <th colspan="4" class="head-subj">KANNADA</th>
+          <th colspan="4" class="head-subj">ENGLISH</th>
+          <th colspan="4" class="head-subj">MATHS</th>
+          <th colspan="4" class="head-subj">EVS</th>
+          <th colspan="4" class="head-co">CO-CURRICULAR ACTIVITIES</th>
+          <th rowspan="2">TOTAL (/400)</th>
+          <th rowspan="2">PERCENTAGE (%)</th>
+          <th rowspan="2">OVERALL GRADE</th>
+        </tr>
+        <tr>
+          <th class="head-subj">S1 (50)</th><th class="head-subj">S2 (50)</th><th class="head-subj">Tot</th><th class="head-subj">Grade</th>
+          <th class="head-subj">S1 (50)</th><th class="head-subj">S2 (50)</th><th class="head-subj">Tot</th><th class="head-subj">Grade</th>
+          <th class="head-subj">S1 (50)</th><th class="head-subj">S2 (50)</th><th class="head-subj">Tot</th><th class="head-subj">Grade</th>
+          <th class="head-subj">S1 (50)</th><th class="head-subj">S2 (50)</th><th class="head-subj">Tot</th><th class="head-subj">Grade</th>
+          <th class="head-co">Phy Edu</th><th class="head-co">Music/Dance</th><th class="head-co">Crafts</th><th class="head-co">Health/Value</th>
+        </tr>
+      </thead>
+      <tbody id="registerBody"></tbody>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-signature">
+    Designed by : LAKSHMIKANTH R (Mob:9844444871)
+  </div>
+
+  <script>
+    let studentLogs = JSON.parse(localStorage.getItem('mdm_marks_register_v2')) || [];
+
+    function updateHeader() {
+      const name = document.getElementById('schoolName').value;
+      document.getElementById('dispSchool').innerText = name ? name.toUpperCase() : 'GOVERNMENT LOWER/HIGHER PRIMARY SCHOOL';
+    }
+
+    function getGrade(score) {
+      if (score >= 90) return 'A+';
+      if (score >= 70) return 'A';
+      if (score >= 50) return 'B+';
+      if (score >= 30) return 'B';
+      return 'C';
+    }
+
+    document.getElementById('marksForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const entry = {
+        slNo: document.getElementById('slNo').value,
+        name: document.getElementById('studentName').value,
+        present: parseFloat(document.getElementById('daysPresent').value) || 0,
+        kan1: parseFloat(document.getElementById('kan_s1').value) || 0,
+        kan2: parseFloat(document.getElementById('kan_s2').value) || 0,
+        eng1: parseFloat(document.getElementById('eng_s1').value) || 0,
+        eng2: parseFloat(document.getElementById('eng_s2').value) || 0,
+        mat1: parseFloat(document.getElementById('mat_s1').value) || 0,
+        mat2: parseFloat(document.getElementById('mat_s2').value) || 0,
+        evs1: parseFloat(document.getElementById('evs_s1').value) || 0,
+        evs2: parseFloat(document.getElementById('evs_s2').value) || 0,
+        g_pe: document.getElementById('g_pe').value,
+        g_md: document.getElementById('g_md').value,
+        g_craft: document.getElementById('g_craft').value,
+        g_hv: document.getElementById('g_hv').value
+      };
+
+      studentLogs.push(entry);
+      saveData();
+      renderTable();
+      this.reset();
+      document.getElementById('slNo').value = studentLogs.length + 1;
+    });
+
+    function saveData() {
+      localStorage.setItem('mdm_marks_register_v2', JSON.stringify(studentLogs));
+      localStorage.setItem('mdm_school', document.getElementById('schoolName').value);
+      localStorage.setItem('mdm_taluk', document.getElementById('talukName').value);
+      localStorage.setItem('mdm_dist', document.getElementById('distName').value);
+      localStorage.setItem('mdm_class', document.getElementById('className').value);
+
+      const msg = document.getElementById('statusMsg');
+      msg.innerText = '✓ Saved!';
+      setTimeout(() => { msg.innerText = ''; }, 2000);
+    }
+
+    function clearData() {
+      if (confirm('Are you sure you want to clear all records?')) {
+        studentLogs = [];
+        localStorage.removeItem('mdm_marks_register_v2');
+        renderTable();
+      }
+    }
+
+    if (localStorage.getItem('mdm_school')) document.getElementById('schoolName').value = localStorage.getItem('mdm_school');
+    if (localStorage.getItem('mdm_taluk')) document.getElementById('talukName').value = localStorage.getItem('mdm_taluk');
+    if (localStorage.getItem('mdm_dist')) document.getElementById('distName').value = localStorage.getItem('mdm_dist');
+    if (localStorage.getItem('mdm_class')) document.getElementById('className').value = localStorage.getItem('mdm_class');
+    updateHeader();
+
+    function renderTable() {
+      const tbody = document.getElementById('registerBody');
+      tbody.innerHTML = '';
+      const totalDays = parseFloat(document.getElementById('totalDays').value) || 220;
+
+      studentLogs.forEach(s => {
+        const kanTot = s.kan1 + s.kan2;
+        const engTot = s.eng1 + s.eng2;
+        const matTot = s.mat1 + s.mat2;
+        const evsTot = s.evs1 + s.evs2;
+
+        const grandTotal = kanTot + engTot + matTot + evsTot;
+        const percentage = (grandTotal / 400) * 100;
+        const overallGrade = getGrade(percentage);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.slNo}</td>
+          <td style="text-align:left; font-weight:bold;">${s.name}</td>
+          <td>${s.present}/${totalDays}</td>
+          
+          <td>${s.kan1}</td><td>${s.kan2}</td><td><b>${kanTot}</b></td><td><b>${getGrade(kanTot)}</b></td>
+          <td>${s.eng1}</td><td>${s.eng2}</td><td><b>${engTot}</b></td><td><b>${getGrade(engTot)}</b></td>
+          <td>${s.mat1}</td><td>${s.mat2}</td><td><b>${matTot}</b></td><td><b>${getGrade(matTot)}</b></td>
+          <td>${s.evs1}</td><td>${s.evs2}</td><td><b>${evsTot}</b></td><td><b>${getGrade(evsTot)}</b></td>
+          
+          <td>${s.g_pe}</td><td>${s.g_md}</td><td>${s.g_craft}</td><td>${s.g_hv}</td>
+          <td><b>${grandTotal}</b></td>
+          <td><b>${percentage.toFixed(1)}%</b></td>
+          <td style="font-weight:bold; color:#1e3a8a;">${overallGrade}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
